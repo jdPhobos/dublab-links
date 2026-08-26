@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.example.dublab",
+    "sha256_cert_fingerprints": ["6A59B511AE86E9EEB9A1ED6F889CF6C98CBC72A690F5A86E5430F28EAF5483CF"]
+  }
+}]
