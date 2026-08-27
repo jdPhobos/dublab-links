@@ -82,14 +82,7 @@
                 // значит приложение не установлено
                 if (document.hasFocus()) {
                     status.textContent = 'Приложение не найдено. Скачайте APK по ссылке ниже.';
-                    
-                    // Добавляем ссылку на APK (замените на вашу реальную ссылку)
-                    const apkLink = document.createElement('a');
-                    apkLink.href = 'https://drive.google.com/your-apk-link'; // ЗАМЕНИТЕ НА ВАШУ ССЫЛКУ
-                    apkLink.textContent = 'Скачать приложение';
-                    apkLink.className = 'btn';
-                    apkLink.style.marginTop = '16px';
-                    document.querySelector('.container').appendChild(apkLink);
+                
                 }
             }, 2000);
         });
