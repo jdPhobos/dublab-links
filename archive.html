@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DUBLAB ARCHIVE</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        p {
+            color: #999;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            background: #fff;
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+        .status {
+            margin-top: 24px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DUBLAB ARCHIVE</h1>
+        <p>Это ссылка на трек из приложения DUBLAB ARCHIVE.</p>
+        <a href="#" id="appLink" class="btn">Открыть в приложении</a>
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        // Извлекаем slug из URL
+        const path = window.location.pathname;
+        const match = path.match(/\/archive\/(.+)$/);
+        const slug = match ? match[1] : '';
+        
+        // Формируем ссылку на приложение
+        const appUrl = `https://jdphobos.github.io/dublab-links/archive/${slug}`;
+        const appLink = document.getElementById('appLink');
+        const status = document.getElementById('status');
+        
+        appLink.href = appUrl;
+        
+        // Попытка открыть приложение
+        appLink.addEventListener('click', function(e) {
+            status.textContent = 'Пытаюсь открыть приложение...';
+            
+            // Если приложение установлено и верифицировано, 
+            // браузер автоматически откроет его вместо перехода по ссылке
+            setTimeout(() => {
+                // Если через 2 секунды мы всё ещё на этой странице,
+                // значит приложение не установлено
+                if (document.hasFocus()) {
+                    status.textContent = 'Приложение не найдено. Скачайте APK по ссылке ниже.';
+                    
+                    // Добавляем ссылку на APK (замените на вашу реальную ссылку)
+                    const apkLink = document.createElement('a');
+                    apkLink.href = 'https://drive.google.com/your-apk-link'; // ЗАМЕНИТЕ НА ВАШУ ССЫЛКУ
+                    apkLink.textContent = 'Скачать приложение';
+                    apkLink.className = 'btn';
+                    apkLink.style.marginTop = '16px';
+                    document.querySelector('.container').appendChild(apkLink);
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
