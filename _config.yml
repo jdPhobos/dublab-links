@@ -1,0 +1,5 @@
+include:
+  - ".well-known"
+
+# Все неизвестные страницы → archive.html
+not_found_page: archive.html
