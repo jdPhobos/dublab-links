@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DUBLAB ARCHIVE</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container { max-width: 400px; text-align: center; }
+        h1 { font-size: 28px; margin-bottom: 16px; font-weight: 600; }
+        p { color: #999; margin-bottom: 32px; line-height: 1.5; }
+        .btn {
+            display: inline-block;
+            padding: 16px 32px;
+            background: #fff;
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 8px;
+        }
+        .status { margin-top: 24px; font-size: 14px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DUBLAB ARCHIVE</h1>
+        <p id="message">Открываем трек в приложении...</p>
+        <div id="buttons"></div>
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        // Извлекаем slug из URL
+        const path = window.location.pathname;
+        const match = path.match(/\/archive\/(.+)$/);
+        const slug = match ? match[1] : '';
+        
+        if (!slug) {
+            document.getElementById('message').textContent = 'Неверная ссылка';
+            return;
+        }
+
+        const appUrl = `https://jdphobos.github.io/dublab-links/archive/${slug}`;
+        const buttons = document.getElementById('buttons');
+        const status = document.getElementById('status');
+
+        // Кнопка "Открыть в приложении"
+        const appBtn = document.createElement('a');
+        appBtn.href = appUrl;
+        appBtn.textContent = 'Открыть в приложении';
+        appBtn.className = 'btn';
+        buttons.appendChild(appBtn);
+
+        // Пытаемся открыть приложение автоматически
+        setTimeout(() => {
+            window.location.href = appUrl;
+        }, 500);
+
+        // Если через 3 секунды всё ещё на этой странице — показываем сообщение
+        setTimeout(() => {
+            if (document.hasFocus()) {
+                status.textContent = 'Приложение не найдено. Установите его и попробуйте снова.';
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
