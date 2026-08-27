@@ -19,7 +19,7 @@
         }
         .container { max-width: 400px; text-align: center; }
         h1 { font-size: 28px; margin-bottom: 16px; font-weight: 600; }
-        p { color: #999; margin-bottom: 32px; line-height: 1.5; }
+        p { color: #999; margin-bottom: 24px; line-height: 1.5; }
         .btn {
             display: inline-block;
             padding: 16px 32px;
@@ -30,51 +30,96 @@
             font-weight: 600;
             font-size: 16px;
             margin: 8px;
+            cursor: pointer;
+            border: none;
         }
+        .btn:hover { opacity: 0.9; }
         .status { margin-top: 24px; font-size: 14px; color: #666; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>DUBLAB ARCHIVE</h1>
         <p id="message">Открываем трек в приложении...</p>
-        <div id="buttons"></div>
+        <div id="buttons" class="hidden">
+            <a href="#" id="appLink" class="btn">Открыть в приложении</a>
+            <a href="https://drive.google.com/your-apk-link-here" id="downloadBtn" class="btn" style="background: #333; color: #fff;">
+                Скачать приложение
+            </a>
+        </div>
         <div class="status" id="status"></div>
     </div>
 
     <script>
-        // Извлекаем slug из URL
         const path = window.location.pathname;
         const match = path.match(/\/archive\/(.+)$/);
         const slug = match ? match[1] : '';
         
         if (!slug) {
             document.getElementById('message').textContent = 'Неверная ссылка';
+            document.getElementById('buttons').classList.remove('hidden');
             return;
         }
 
         const appUrl = `https://jdphobos.github.io/dublab-links/archive/${slug}`;
+        const intentUrl = `intent://jdphobos.github.io/dublab-links/archive/${slug}#Intent;scheme=https;package=com.example.dublab;end`;
+        
+        const appLink = document.getElementById('appLink');
         const buttons = document.getElementById('buttons');
+        const message = document.getElementById('message');
         const status = document.getElementById('status');
+        
+        appLink.href = appUrl;
 
-        // Кнопка "Открыть в приложении"
-        const appBtn = document.createElement('a');
-        appBtn.href = appUrl;
-        appBtn.textContent = 'Открыть в приложении';
-        appBtn.className = 'btn';
-        buttons.appendChild(appBtn);
-
-        // Пытаемся открыть приложение автоматически
-        setTimeout(() => {
-            window.location.href = appUrl;
-        }, 500);
-
-        // Если через 3 секунды всё ещё на этой странице — показываем сообщение
-        setTimeout(() => {
-            if (document.hasFocus()) {
-                status.textContent = 'Приложение не найдено. Установите его и попробуйте снова.';
+        // Стратегия 1: Пытаемся открыть через intent:// (работает в большинстве WebView)
+        function tryOpenViaIntent() {
+            try {
+                window.location.href = intentUrl;
+            } catch (e) {
+                // Игнорируем ошибку
             }
-        }, 3000);
+        }
+
+        // Стратегия 2: Прямой переход (работает в Chrome)
+        function tryOpenDirect() {
+            window.location.href = appUrl;
+        }
+
+        // Пытаемся открыть приложение сразу
+        const startTime = Date.now();
+        tryOpenViaIntent();
+
+        // Через 300мс проверяем, остались ли на странице
+        setTimeout(() => {
+            const elapsed = Date.now() - startTime;
+            // Если прошло меньше 2 секунд — значит, мы всё ещё на странице
+            // (иначе браузер уже ушёл в приложение)
+            if (elapsed < 2000 && document.hasFocus()) {
+                // Пытаемся второй способ
+                tryOpenDirect();
+                
+                // Через ещё 300мс показываем кнопки
+                setTimeout(() => {
+                    if (document.hasFocus()) {
+                        message.textContent = 'Приложение не найдено';
+                        buttons.classList.remove('hidden');
+                        status.textContent = 'Установите приложение и попробуйте снова';
+                    }
+                }, 300);
+            }
+        }, 300);
+
+        // Если пользователь вручную нажал "Открыть в приложении"
+        appLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            tryOpenViaIntent();
+            setTimeout(() => {
+                if (document.hasFocus()) {
+                    tryOpenDirect();
+                }
+            }, 500);
+        });
     </script>
 </body>
 </html>
